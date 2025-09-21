@@ -12,6 +12,7 @@
     <button type="submit">Login</button>
   </form>
 
+  <!-- CDN oficial do Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
   <script>
     const supabase = supabase.createClient(
@@ -22,12 +23,22 @@
     const form = document.getElementById('login')
     form.addEventListener('submit', async (e) => {
       e.preventDefault()
+
       const email = document.getElementById('email').value
       const senha = document.getElementById('senha').value
 
       const { error } = await supabase.auth.signInWithPassword({ email, password: senha })
-      if (error) alert(error.message)
-      else window.location.href = "home.html"
+
+      if (error) {
+        // Verifica se o usuário ainda não confirmou o e-mail
+        if (error.message.includes('User not confirmed')) {
+          alert('Confirme seu e-mail antes de entrar. Verifique sua caixa de entrada.')
+        } else {
+          alert(error.message)
+        }
+      } else {
+        window.location.href = "home.html"
+      }
     })
   </script>
 </body>
